@@ -1,3 +1,7 @@
+## Live Demo
+
+[Open AirRoute](https://airroute.onrender.com)
+
 # AirRoute
 
 AirRoute is a real-time air traffic routing and conflict simulation built with Java, Spring Boot, React, TypeScript, MapLibre, and WebSockets.
