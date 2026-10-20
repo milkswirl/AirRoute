@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import * as maplibregl from "maplibre-gl";
 import { Client } from "@stomp/stompjs";
+import { WS_BASE_URL } from "../config";
 
 type FlightPhase =
   | "WAITING"
@@ -2882,7 +2883,7 @@ export default function AircraftMarker({
       new Client({
 
         brokerURL:
-          "ws://localhost:8080/ws",
+          `${WS_BASE_URL}/ws`,
 
         reconnectDelay:
           5000,

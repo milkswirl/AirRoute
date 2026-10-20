@@ -10,6 +10,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 
 import AircraftMarker from "./AircraftMarker";
 import SimulationDashboard from "./SimulationDashboard";
+import { API_BASE_URL } from "../config";
 
 type WeatherHazard = {
   waypointId: string;
@@ -239,7 +240,7 @@ export default function AirRouteMap() {
 
         const response =
           await fetch(
-            "http://localhost:8080/api/weather"
+            `${API_BASE_URL}/api/weather`
           );
 
         const data =
@@ -269,7 +270,7 @@ export default function AirRouteMap() {
 
         const response =
           await fetch(
-            "http://localhost:8080/api/simulation/status"
+            `${API_BASE_URL}/api/simulation/status`
           );
 
         const data =
@@ -310,7 +311,7 @@ export default function AirRouteMap() {
 
         const response =
           await fetch(
-            `http://localhost:8080/api/simulation/${command}`,
+            `${API_BASE_URL}/api/simulation/${command}`,
             {
 
               method:
@@ -385,7 +386,7 @@ export default function AirRouteMap() {
 
         const response =
           await fetch(
-            `http://localhost:8080/api/simulation/speed?multiplier=${multiplier}`,
+            `${API_BASE_URL}/api/simulation/speed?multiplier=${multiplier}`,
             {
 
               method:
