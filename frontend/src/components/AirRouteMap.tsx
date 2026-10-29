@@ -11,6 +11,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import AircraftMarker from "./AircraftMarker";
 import SimulationDashboard from "./SimulationDashboard";
 import { API_BASE_URL } from "../config";
+import { SharedSimulationClient } from "../services/sharedSimulationClient";
 
 type WeatherHazard = {
   waypointId: string;
@@ -295,6 +296,16 @@ export default function AirRouteMap() {
 
     loadStatus();
 
+    const statusClient = new SharedSimulationClient({
+      onConnect: () => {
+        statusClient.subscribe("/topic/simulation-status", (message) => {
+          setStatus(JSON.parse(message.body) as SimulationStatus);
+        });
+      },
+    });
+    statusClient.activate();
+
+    return () => statusClient.deactivate();
   }, []);
 
   // ------------------------------------------------

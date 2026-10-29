@@ -74,6 +74,11 @@ public class SimulationService {
 
     private int broadcastTickCounter = 0;
 
+    private static final long MAX_RUN_NANOS =
+            java.util.concurrent.TimeUnit.MINUTES.toNanos(10);
+
+    private long runStartedNanos = System.nanoTime();
+
     public SimulationService(
             WeatherService weatherService,
             SimpMessagingTemplate messagingTemplate,
@@ -255,6 +260,9 @@ public class SimulationService {
 
         paused =
                 false;
+
+        runStartedNanos = System.nanoTime();
+        broadcastTickCounter = 0;
 
         speedAccumulator =
                 0.0;
@@ -584,6 +592,15 @@ public class SimulationService {
     public synchronized void updateSimulation() {
 
         if (paused) {
+            return;
+        }
+
+        // Ten real minutes, independent of the simulation speed.
+        if (System.nanoTime() - runStartedNanos >= MAX_RUN_NANOS) {
+            paused = true;
+            broadcastTickCounter = 0;
+            broadcastCurrentState();
+            System.out.println("AIRROUTE: Automatically paused after ten minutes.");
             return;
         }
 
@@ -2277,6 +2294,9 @@ public class SimulationService {
         paused =
                 false;
 
+        runStartedNanos = System.nanoTime();
+        broadcastTickCounter = 0;
+
         speedAccumulator =
                 0.0;
 
@@ -2289,14 +2309,19 @@ public class SimulationService {
 
     public synchronized void startSimulation() {
 
-        paused =
-                false;
+        if (paused) {
+            runStartedNanos = System.nanoTime();
+            broadcastTickCounter = 0;
+            paused = false;
+            broadcastCurrentState();
+        }
     }
 
     public synchronized void pauseSimulation() {
 
         paused =
                 true;
+        broadcastCurrentState();
     }
 
     public synchronized boolean isPaused() {
@@ -2309,6 +2334,15 @@ public class SimulationService {
     // ------------------------------------------------
 
     private void broadcastCurrentState() {
+
+        messagingTemplate.convertAndSend(
+                "/topic/simulation-status",
+                (Object) java.util.Map.of(
+                        "paused", paused,
+                        "scenarioType", getScenarioType(),
+                        "speedMultiplier", simulationSpeed
+                )
+        );
 
         messagingTemplate.convertAndSend(
                 "/topic/aircraft",

@@ -7,6 +7,7 @@ const topics = [
   "/topic/conflicts",
   "/topic/predicted-conflicts",
   "/topic/reroutes",
+  "/topic/simulation-status",
 ];
 const listeners = new Map<string, Set<Handler>>();
 let consumers = 0;
