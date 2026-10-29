@@ -72,6 +72,8 @@ public class SimulationService {
      */
     private double speedAccumulator;
 
+    private int broadcastTickCounter = 0;
+
     public SimulationService(
             WeatherService weatherService,
             SimpMessagingTemplate messagingTemplate,
@@ -617,12 +619,14 @@ public class SimulationService {
             runSimulationStep();
         }
 
-        /*
-         * Send only one frontend update each
-         * real 100 ms tick. This keeps 4x mode
-         * smooth without flooding WebSocket.
-         */
-        broadcastCurrentState();
+        // Keep simulation updates at 100 ms,
+        // but send browser updates only once per second.
+        broadcastTickCounter++;
+
+        if (broadcastTickCounter >= 10) {
+            broadcastTickCounter = 0;
+            broadcastCurrentState();
+        }
     }
 
     // ------------------------------------------------
