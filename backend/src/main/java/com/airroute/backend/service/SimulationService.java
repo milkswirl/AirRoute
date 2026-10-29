@@ -619,11 +619,11 @@ public class SimulationService {
             runSimulationStep();
         }
 
-        // Keep simulation updates at 100 ms,
+        // Keep simulation updates at 250 ms,
         // but send browser updates only once per second.
         broadcastTickCounter++;
 
-        if (broadcastTickCounter >= 10) {
+        if (broadcastTickCounter >= 25) {
             broadcastTickCounter = 0;
             broadcastCurrentState();
         }
